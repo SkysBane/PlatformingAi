@@ -20,7 +20,7 @@ def formNextGeneration(results, candidatesPercent, mutatePercent):
             futureBrains.append(results[i % int(candidatesPercent*population)][0].clone().mutate(0.1, 0.1))
         else:
             if (i % int(candidatesPercent*population) == i % 3):
-                futureBrains.append(results[i % int(candidatesPercent*population)][0].createOffspring(results[i+1 % 3][0], 0.5))
+                futureBrains.append(results[i % int(candidatesPercent*population)][0].createOffspring(results[(i+1) % 3][0], 0.5))
             else:
                 futureBrains.append(results[i % int(candidatesPercent*population)][0].createOffspring(results[i % 3][0], 0.5))
 
