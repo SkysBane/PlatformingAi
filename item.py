@@ -1,13 +1,12 @@
-from randomColor import Color
 from block import Block
 from data import Data
 
 class Item():
-    def __init__(self, player, type = "empty", data = Data()) -> None:
+    def __init__(self, player, type = "empty", data=None) -> None:
         self.itemType = type
-        self.data = data
+        self.data = Data() if data is None else data
         self.player = player
-        if data.type == "wood":
+        if self.data.type == "wood":
             self.data.color = "#8c6f1d"
 
     

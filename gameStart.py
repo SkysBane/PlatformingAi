@@ -1,5 +1,9 @@
-from main import Main
+"""Compatibility entry point for human play."""
 
-game = Main(0, False, rayCastOnly=False, bonusStats=False, timedDeath=False)
+import sys
 
-game.run()
+from cli import main
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(["play", *sys.argv[1:]]))

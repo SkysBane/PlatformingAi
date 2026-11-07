@@ -1,9 +1,7 @@
 import pygame
 
-class Ground():
+
+class Ground:
     def __init__(self, x, y, height):
-        self.x = x
-        self.y = y
-        self.surface = pygame.surface.Surface((100000, height))
-        self.rect = self.surface.get_rect(midtop = (self.x, self.y))
-        self.surface.fill("#000000")
+        self.rect = pygame.Rect(0, 0, 100000, height)
+        self.rect.midtop = (x, y)
