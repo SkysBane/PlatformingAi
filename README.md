@@ -67,12 +67,13 @@ python cli.py train --level 7 --population 100 --generations 500 --headless --st
 | --- | --- | --- |
 | `--level` | `7` | Level to train on. A new-format seed checkpoint supplies its level when omitted |
 | `--population` | `25` | Models evaluated in each generation. Minimum is two |
-| `--generations` | `200` | Generations to evaluate in this invocation |
+| `--generations` | `50` | Generations to evaluate in this invocation |
 | `--max-steps` | `1800` | Simulation steps per episode. At 60 steps per second, 1800 steps is 30 seconds |
 | `--hidden-layers` / `--hidden-size` | `1` / `21` | Network depth and hidden width. Use `--hidden-layers 0` for a direct input-to-output network |
 | `--seed` | Random | Seed for initialization, parent selection, crossover, and mutation |
 | `--output` | A new folder in `runs/` | Directory for checkpoints. An explicit directory must be new |
 | `--headless` / `--show` | Headless | Run without a window, or see the population at interactive speed |
+| `--fast`| Not Fast | Use with `--show` to allow the simulation to run as fast as possible while still rendering |
 | `--fps` | `60` | Rendering cap when using `--show`. Use `0` for uncapped rendering |
 | `--stop-on-win` | Off | Stop after saving the first generation with a finisher |
 
