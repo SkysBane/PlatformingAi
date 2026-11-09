@@ -41,10 +41,11 @@ def add_fps(command):
 
 
 def add_training_options(command):
-    command.add_argument("--generations", type=positive, default=200)
+    command.add_argument("--generations", type=positive, default=50)
     command.add_argument("--output", type=Path, help="new directory for checkpoints")
     display = command.add_mutually_exclusive_group()
     display.add_argument("--show", dest="show", action="store_true", help="render in real time")
+    command.add_argument("--fast", action="store_true", help="run simulation as fast as possible with --show")
     display.add_argument("--headless", dest="show", action="store_false", help="train without a window (default)")
     command.set_defaults(show=False)
     command.add_argument("--stop-on-win", action="store_true", help="stop after a generation reaches the flag")
@@ -86,6 +87,8 @@ def build_parser():
 
 
 def train_command(args):
+    if args.fast and not args.show:
+        raise ValueError("--fast requires --show; headless training already runs at full speed")
     if args.command == "resume":
         state = load_checkpoint(args.checkpoint)
         if not isinstance(state, dict):
@@ -111,7 +114,7 @@ def train_command(args):
         )
         state = new_run(config, args.seed, initial_model)
     directory = make_run_directory(args.output)
-    return train(state, args.generations, directory, args.show, args.fps, args.stop_on_win)
+    return train(state, args.generations, directory, args.show, args.fast, args.fps, args.stop_on_win)
 
 
 def watch_command(args):

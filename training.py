@@ -109,12 +109,24 @@ def next_generation(ranked, generator):
     return population
 
 
-def train(state, generations, directory, show=False, fps=60, stop_on_win=False):
+def train(state, generations, directory, show=False, fast=False, fps=60, stop_on_win=False):
     config = TrainingConfig(**state["config"])
     generator = np.random.default_rng()
     generator.bit_generator.state = state["rng_state"]
     latest = directory / "latest.pkl"
     best = directory / "best.pkl"
+
+    checkpoint_arg = "'" + str(latest.resolve()).replace("'", "''") + "'"
+    resume_command = f"python cli.py resume --checkpoint {checkpoint_arg}"
+    if show:
+        resume_command += f" --show --fps {fps}"
+        if fast:
+            resume_command += " --fast"
+    if stop_on_win:
+        resume_command += " --stop-on-win"
+    best_arg = "'" + str(best.resolve()).replace("'", "''") + "'"
+    watch_command = f"python cli.py watch --checkpoint {best_arg} --fps 60"
+
     save_checkpoint(latest, state)
     if state["best"] is not None:
         save_checkpoint(best, state)
@@ -124,10 +136,10 @@ def train(state, generations, directory, show=False, fps=60, stop_on_win=False):
     try:
         for _ in range(generations):
             game.resetAndRestartNNBrains(state["population"])
-            results = game.runNN(maxFrames=config.max_steps, fps=fps)
+            results = game.runNN(maxFrames=config.max_steps, fps=fps, fast=fast)
             if results is False:
-                print("Window closed. Resume from latest.pkl.")
-                break
+                print(f"Window closed. Resume from latest.pkl by running:\n{resume_command}")
+                return 0
 
             ranked = sorted(results, key=lambda row: row[1], reverse=True)
             winner = ranked[0]
@@ -153,8 +165,11 @@ def train(state, generations, directory, show=False, fps=60, stop_on_win=False):
             )
             if stop_on_win and completed:
                 break
+
+        print(f"Training complete. Watch best.pkl by running:\n{watch_command}")
+        
     except KeyboardInterrupt:
-        print("\nTraining stopped. Resume from latest.pkl.")
+        print(f"\nTraining stopped. Resume from latest.pkl by running:\n{resume_command}")
         return 130
     finally:
         game.quitPygame()

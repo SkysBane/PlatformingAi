@@ -27,13 +27,15 @@ class RenderClock:
     def __init__(self):
         self.timestamps = deque([perf_counter_ns()], maxlen=11)
 
-    def tick(self, fps):
+    def tick(self, fps, wait=True):
         previous = self.timestamps[-1]
         now = perf_counter_ns()
         if fps:
             interval = (NANOSECONDS_PER_SECOND + fps - 1) // fps
             remaining = previous + interval - now
             if remaining > 0:
+                if not wait:
+                    return None
                 sleep(remaining / NANOSECONDS_PER_SECOND)
                 now = perf_counter_ns()
         self.timestamps.append(now)

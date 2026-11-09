@@ -340,8 +340,8 @@ class Main:
         self.screen.blit(self.text, (60, 170))
         self.text = self.font.render("score: " + str(self.score), False, "#000000")
         self.screen.blit(self.text, (800, 140))
-        self.text = self.font.render("reward: " + str(self.currentReward), False, "#000000")
-        self.screen.blit(self.text, (800, 170))
+        #self.text = self.font.render("reward: " + str(self.currentReward), False, "#000000")
+        #self.screen.blit(self.text, (800, 170))
         if self.bonusStats:
             self.text = self.font.render("score/time: " + str(self.score / max(self.elapsed_seconds, STEP_SECONDS)), False, "#000000")
             self.screen.blit(self.text, (800, 110))
@@ -530,9 +530,9 @@ class Main:
             player.lastX = player.rect.centerx
             player.lastY = player.rect.centery
 
-    def runNN(self, maxFrames=1800, fps=60):
+    def runNN(self, maxFrames=1800, fps=60, fast = False):
         self.programRunning = True
-        if self.display:
+        if self.display and not fast:
             for steps in self._display_frames(fps):
                 for _ in range(steps):
                     if self.elapsed_steps >= maxFrames or not any(p.alive for p in self.players):
@@ -545,7 +545,14 @@ class Main:
                 return False
         else:
             while self.elapsed_steps < maxFrames and any(p.alive for p in self.players):
+                if self.display:
+                    self._checkEvents()
+                    if not self.programRunning:
+                        return False
+                
                 self.nnFrame(maxFrames)
+                if self.display and self.render_clock.tick(fps, wait=False) is not None:
+                    self._render()
 
         return [(p.brain, p.fitness, p.finished) for p in self.players]
 
